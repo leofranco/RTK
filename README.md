@@ -16,12 +16,12 @@ The project was not difficult by itself but I had to spent a lot of time catchin
 
 The small program is still running on an aws machine with the following endpoints:
 
-<http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set>
-<http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get>
+http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set
+http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get
 
 with an example using the internal IP of:
 
-<http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get?IP=10.157.143.26>
+http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get?IP=10.157.143.26
 
 ## Future Work
 
