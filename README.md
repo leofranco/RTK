@@ -23,6 +23,9 @@ with an example using the internal IP of:
 
 http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get?IP=10.157.143.26
 
+Please see the file https://github.com/leofranco/RTK/blob/master/ServerRTK3.go for the source code.
+
+
 ## Future Work
 
 At this moment I feel I need more in order to make more progress. The best way to start would be to have real usage patterns. Without them there are only a couple of things that could help in general terms.
@@ -330,3 +333,19 @@ Percentage of the requests served within a certain time (ms)
 ```
 
 Note: just discovered the testonborrow from the redigo example sends a ping request when you ask for the resource. I am removing it now.
+
+
+This is the last test I ran at 8pm on Tuesday:
+
+Transactions:  		       25500 hits
+Availability:  		      100.00 %
+Elapsed time:  		       97.67 secs
+Data transferred:      	        2.36 MB
+Response time: 		        0.82 secs
+Transaction rate:      	      261.08 trans/sec
+Throughput:    		        0.02 MB/sec
+Concurrency:   		      214.63
+Successful transactions:                25500
+Failed transactions:   	           0
+Longest transaction:   	        5.13
+Shortest transaction:  	        0.00
