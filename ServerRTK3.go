@@ -32,6 +32,14 @@ package main
 // breaks when  we have too many requests
 // Google Redigo pool
 
+// There are small changes in version number 3
+// of this program.
+// One is that I am explicitly telling go to use
+// as many cores are available. The other
+// one are the changes in the parameters
+// for the redis pool (it could still break
+// with an unlimited number of requests).
+
 import (
     "fmt"
     "time"
