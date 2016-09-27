@@ -105,6 +105,7 @@ $ siege -v -r 200 -c 255 -b http://ec2-107-22-107-4.compute-1.amazonaws.com:8080
 siege aborted due to excessive socket failure; you
 can change the failure threshold in $HOME/.siegerc
 
+```
 Transactions:                 28232 hits
 Availability:                 95.67 %
 Elapsed time:                 51.41 secs
@@ -117,6 +118,7 @@ Successful transactions:      28232
 Failed transactions:               1278
 Longest transaction:               3.11
 Shortest transaction:              0.29
+```
 
 and the go program broker again. I will have to implement a pool for the connections to redis. That is the first issue to solve. The second thing is to find out why there is only one core being used.
 
@@ -125,7 +127,6 @@ The second try is on file ServerRTK2.go
 If we try the siege again:
 ```
 $ siege -v -r 200 -c 255 -b http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set
-```
 Transactions:                51000 hits
 Availability:                100.00 %
 Elapsed time:                95.03 secs
@@ -138,13 +139,13 @@ Successful transactions:     51000
 Failed transactions:                  0
 Longest transaction:               3.93
 Shortest transaction:              0.29
+```
 
 Not too bad, at least the program survived and the cpu usage didn’t go above 20% of one core
 
 I will clean the database and try the siege again with set and get (at the same time):
 ```
 $ siege -v -r 200 -c 255 -b http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set
-```
 Transactions:                51000 hits
 Availability:                100.00 %
 Elapsed time:                102.71 secs
@@ -157,6 +158,7 @@ Successful transactions:       51000
 Failed transactions:                  0
 Longest transaction:               7.57
 Shortest transaction:              0.29
+```
 
 On the get side the load was stable at 6% of one core but the memory increased substantially (>10GB)
 
@@ -174,7 +176,6 @@ Completed 300 requests
 Completed 400 requests
 Completed 500 requests
 Finished 500 requests
-
 
 Server Software:
 Server Hostname:        ec2-107-22-107-4.compute-1.amazonaws.com
@@ -233,7 +234,6 @@ but at this point the bottleneck is my laptop because it died.
 Trying again a simple siege:
 ```
 $ siege -v -r 500 -c 255 -b http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set
-```
 Transactions:                127500 hits
 Availability:                100.00 %
 Elapsed time:                237.01 secs
@@ -246,11 +246,13 @@ Successful transactions:     127500
 Failed transactions:                  0
 Longest transaction:              10.76
 Shortest transaction:              0.29
+```
 
 I am going to start another was machine but this one needs more cpus and less memory. I am going to take a c4.2xlarge with 8 cores at $0.419 per Hour.
 
 I will try the same siege above but started 8 times at the same time:
 
+```
 ==> nohup_t1.out <==
 siege aborted due to excessive socket failure; you
 can change the failure threshold in $HOME/.siegerc
@@ -267,6 +269,7 @@ Successful transactions:      1976
 Failed transactions:               1227
 Longest transaction:               5.09
 Shortest transaction:              0.00
+```
 
 All the outputs are similar which means we are losing transactions but the cpu in the server is still not being used.
 
@@ -336,7 +339,7 @@ Note: just discovered the testonborrow from the redigo example sends a ping requ
 This is the last test I ran at 8pm on Tuesday:
 ```
 siege -v -r 100 -c 255 -b http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set
-```
+
 Transactions:  		       25500 hits
 Availability:  		      100.00 %
 Elapsed time:  		       97.67 secs
@@ -349,3 +352,4 @@ Successful transactions:                25500
 Failed transactions:   	           0
 Longest transaction:   	        5.13
 Shortest transaction:  	        0.00
+```
