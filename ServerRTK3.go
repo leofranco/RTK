@@ -150,11 +150,49 @@ func HandlerGet(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
 }
 
+// Function to add a particular ip to the database
+// this is done only for testing purposes
+func HandlerSetTest(w http.ResponseWriter, r *http.Request) {
+    ip, _, err := net.SplitHostPort(r.RemoteAddr)
+    if err != nil {
+        http.Error(w, `Invalid Address`, http.StatusBadRequest)
+        return
+    }
+    var user_agent string = r.UserAgent()
+
+    // time parsing is slow.
+    // also be careful with time zones
+    time_utc := time.Now().UTC()
+
+    // We don't have a connection per request
+    // now, just a fixed number in the pool
+    redis_conn := pool.Get()
+    defer redis_conn.Close()
+
+    // for this test we allow
+    // a particular IP to be added
+    ipreq := r.URL.Query()["IP"]
+    if ipreq != nil {
+        // fmt.Fprintf(w,"Replacing IP %s, by IP %s", ip, ipreq[0])
+        ip=ipreq[0]
+    }
+
+    // instead of having field names we are
+    // using the date/useragent as a filed/value pair
+    redis_conn.Do("HSET", ip, time_utc, user_agent)
+
+    // All operations with strings are expensive
+    // do we really want/need them here?
+    fmt.Fprintf(w, "{\"%s\":\"%s\"}\n", time_utc,user_agent)
+    w.Header().Set("Content-Type", "application/json")
+}
+
 func main() {
     runtime.GOMAXPROCS(runtime.NumCPU())
     fmt.Printf("Number of cores enabled: %d\n", runtime.GOMAXPROCS(runtime.NumCPU()))
 
     http.HandleFunc("/set", HandlerSet)
     http.HandleFunc("/get", HandlerGet)
+    http.HandleFunc("/set_test", HandlerSetTest)
     http.ListenAndServe(":8080", nil)
 }
