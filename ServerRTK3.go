@@ -93,14 +93,22 @@ func HandlerSet(w http.ResponseWriter, r *http.Request) {
 
     // instead of having field names we are
     // using the date/useragent as a filed/value pair
-    redis_conn.Do("HSET", "user:"+ip, time_utc, user_agent)
+    redis_conn.Do("HSET", ip, time_utc, user_agent)
     
-    fmt.Fprintf(w, "IP: %s\n", ip)
-    fmt.Fprintf(w, "UserAgent: %s\n", user_agent)
-    fmt.Fprintf(w, "TimeStamp (UTC): %s\n", time_utc)
+    // All operations with strings are expensive
+    // do we really want/need them here?
+    //fmt.Fprintf(w, "IP: %s\n", ip)
+    //fmt.Fprintf(w, "UserAgent: %s\n", user_agent)
+    //fmt.Fprintf(w, "TimeStamp (UTC): %s\n", time_utc)
+
+    fmt.Fprintf(w, "{\"%s\":\"%s\"}\n", time_utc,user_agent)
+    w.Header().Set("Content-Type", "application/json")
 }
 
 func HandlerGet(w http.ResponseWriter, r *http.Request) {
+    // I don't know how expensive is net.SplitHostPort
+    // we actually don't need it, we could use the 
+    // full RemoteAddr  
     ip, _, err := net.SplitHostPort(r.RemoteAddr)
     if err != nil {
         http.Error(w, `Invalid Address`, http.StatusBadRequest)
@@ -126,7 +134,7 @@ func HandlerGet(w http.ResponseWriter, r *http.Request) {
 
     // Get all the field/value pairs
     // for this IP address
-    res_list, err := redis.StringMap(redis_conn.Do("HGETALL", "user:"+ip))
+    res_list, err := redis.StringMap(redis_conn.Do("HGETALL", ip))
     if err != nil {
            panic(err)
     }
@@ -138,6 +146,8 @@ func HandlerGet(w http.ResponseWriter, r *http.Request) {
     encoded, _ := json.Marshal(res_list)
     encoded_string := string(encoded)
     fmt.Fprintf(w,encoded_string)
+
+    w.Header().Set("Content-Type", "application/json")
 }
 
 func main() {

@@ -1,4 +1,4 @@
-package main
+package old
 
 // Using GoLang write a small program which will accomplish the following: 
 //
