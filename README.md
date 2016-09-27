@@ -16,12 +16,12 @@ The project was not difficult by itself but I had to spent a lot of time catchin
 
 The small program is still running on an aws machine with the following endpoints:
 
-http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set
-http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get
+* http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set
+* http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get
 
 with an example using the internal IP of:
 
-http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get?IP=10.157.143.26
+* http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/get?IP=10.157.143.26
 
 Please see the file https://github.com/leofranco/RTK/blob/master/ServerRTK3.go for the source code.
 
@@ -34,7 +34,6 @@ At this moment I feel I need more in order to make more progress. The best way t
 
 * I implemented an additional endpoint called set_test that would be useful for benchmarking. We can specify an IP in the same way we do it for the get endpoint. Having a set of benchmarks would be very useful to measure impact of changes in the application (when removing the encoding/decoding from son for instance).
 
-
 #### There are several improvements that would make sense only after everything else has been optimised.
 
 * Checkout the parameter for redis pools and optimise that.
@@ -43,7 +42,6 @@ At this moment I feel I need more in order to make more progress. The best way t
 * See if using all the CPUs hurts instead of helping (too many context switches).
 * Try a more optimised version of net/http like https://github.com/valyala/fasthttp
 * See if the other redis libraries are better/faster. I just found out go-redis has a benchmark comparison vs redigo.
-
 
 
 ## Journal
@@ -336,7 +334,9 @@ Note: just discovered the testonborrow from the redigo example sends a ping requ
 
 
 This is the last test I ran at 8pm on Tuesday:
-
+```
+siege -v -r 100 -c 255 -b http://ec2-107-22-107-4.compute-1.amazonaws.com:8080/set
+```
 Transactions:  		       25500 hits
 Availability:  		      100.00 %
 Elapsed time:  		       97.67 secs
